@@ -31,6 +31,20 @@ func (e *Elevator) GetElevatorID() int {
 	return e.elevatorID
 }
 
+func (e *Elevator) GetCurrentFloorNumber() int {
+  return e.currentFloorNumber
+}
+
+func (e *Elevator) GetGoalFloorNumbers() []int {
+  goalFloors := make([]int, 0)
+
+  for k, _ := range e.goalFloorNumber { 
+    goalFloors = append(goalFloors, k)
+  }
+
+  return goalFloors
+}
+
 func (e *Elevator) addGoalFloor(floorNumber int, dir int) {
 	if n := len(e.goalFloorNumber); n == 0 {
 		e.direction = dir
@@ -57,7 +71,7 @@ func (e *Elevator) NextFloor() int {
 	return e.currentFloorNumber + 1
 }
 
-type pickup struct {
+type PickupReq struct {
 	pickupFloor int
 	direction   int // -1 == down, 1 == up
 }
@@ -78,12 +92,14 @@ func NewElevatorControlSystem(NumberOfElevators int) *ElevatorControlSystem {
 	return &ecs
 }
 
-func (ecs *ElevatorControlSystem) status() string {
-	return ""
+func (ecs *ElevatorControlSystem) status() {
+	for _, elev := range ecs.elevator {
+    fmt.Println("elevatorID:", elev.GetElevatorID(), "currentFloor:", elev.GetCurrentFloorNumber(), "goalFloors:", elev.GetGoalFloorNumbers())
+  }
 }
 
 func (ecs *ElevatorControlSystem) pickup(pickupFloorNumber int, direction int) {
-	ecs.pickupRequests.Push(pickup{pickupFloorNumber, direction})
+	ecs.pickupRequests.Push(PickupReq{pickupFloorNumber, direction})
 }
 
 func (ecs *ElevatorControlSystem) update(elevatorID int, currentFloor int, goalFloor int, direction int) {
@@ -95,7 +111,7 @@ func (ecs *ElevatorControlSystem) step() {
 		if ecs.pickupRequests.Len() > 0 {
 			req := ecs.pickupRequests.Pop()
 
-			if e, ok := req.(pickup); ok {
+			if e, ok := req.(PickupReq); ok {
 				id := elev.GetElevatorID()
 				ecs.update(id, ecs.elevator[id].NextFloor(), e.pickupFloor, e.direction)
 			}
@@ -161,7 +177,7 @@ func main() {
 
 		switch cmd {
 		case Status:
-			continue
+			ecs.status()
 		case Update:
 			continue
 		case Pickup:
