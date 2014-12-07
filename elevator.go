@@ -38,15 +38,19 @@ func (e *Elevator) removeGloalFloor(floorNumber int) {
   delete(e.goalFloorNumber, floorNumber)
 }
 
-func (e *Elevator) Update(currentFloorNum int, goalFloorNum int) {
+func (e *Elevator) Update(currentFloorNum int, goalFloorNum int, dir int) {
   e.currentFloorNumber = currentFloorNum
 
   e.removeGloalFloor(currentFloorNum)
-  e.addGoalFloor(goalFloorNum)
+  e.addGoalFloor(goalFloorNum, dir)
 }
 
-func (e *Elevator) NextFloor() {
-
+func (e *Elevator) NextFloor() int {
+  if e.direction < 0 {
+    return e.currentFloorNumber - 1
+  } else if e.direction > 0 {
+    return e.currentFloorNumber + 1
+  }
 }
 
 type pickup struct {
@@ -78,15 +82,15 @@ func (ecs *ElevatorControlSystem) pickup(pickupFloorNumber int, direction int) {
   ecs.pickupRequests.Push(pickup{pickupFloorNumber, direction})
 }
 
-func (ecs *ElevatorControlSystem) update(elevatorID int, currentFloor int, goalFloor int) {
-  ecs.elevator[elevatorID].Update()
+func (ecs *ElevatorControlSystem) update(elevatorID int, currentFloor int, goalFloor int, direction int) {
+  ecs.elevator[elevatorID].Update(currentFloor, goalFloor, direction)
 }
 
 func (ecs *ElevatorControlSystem) step() {
   for e := range ecs.elevator {
     if ecs.pickupRequests.Len() > 0 {
       req := ecs.pickupRequests.Pop()
-      ecs.update(i, req.direction, req.pickupFloor)
+      ecs.update(i, ecs.elevator[elevatorID].NextFloor(), req.pickupFloor, req.direction)
     }
   }
 }
