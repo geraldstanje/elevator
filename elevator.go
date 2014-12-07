@@ -5,21 +5,21 @@ import (
 	"flag"
 	"fmt"
 	"os"
-  "queue"
-  "strings"
-  "strconv"
+	"queue"
+	"strconv"
+	"strings"
 )
 
 type Elevator struct {
-	elevatorID        int
-  currentFloorNumber int
-	direction int     // 0 == down, 1 == up
-	goalFloorNumber   map[int]bool
+	elevatorID         int
+	currentFloorNumber int
+	direction          int // -1 == down, 1 == up
+	goalFloorNumber    map[int]bool
 }
 
 func StringToInt(value string) int {
-  result, _ := strconv.ParseInt(value, 10, 64)
-  return int(result)
+	result, _ := strconv.ParseInt(value, 10, 64)
+	return int(result)
 }
 
 func NewElevator(ID int) *Elevator {
@@ -28,87 +28,120 @@ func NewElevator(ID int) *Elevator {
 }
 
 func (e *Elevator) GetElevatorID() int {
-  return e.elevatorID
+	return e.elevatorID
 }
 
 func (e *Elevator) addGoalFloor(floorNumber int, dir int) {
-  if n := len(e.goalFloorNumber); n == 0 {
-    e.direction = dir
-  }
-  e.goalFloorNumber[floorNumber] = true
+	if n := len(e.goalFloorNumber); n == 0 {
+		e.direction = dir
+	}
+	e.goalFloorNumber[floorNumber] = true
 }
 
 func (e *Elevator) removeGloalFloor(floorNumber int) {
-  delete(e.goalFloorNumber, floorNumber)
+	delete(e.goalFloorNumber, floorNumber)
 }
 
 func (e *Elevator) Update(currentFloorNum int, goalFloorNum int, dir int) {
-  e.currentFloorNumber = currentFloorNum
+	e.currentFloorNumber = currentFloorNum
 
-  e.removeGloalFloor(currentFloorNum)
-  e.addGoalFloor(goalFloorNum, dir)
+	e.removeGloalFloor(currentFloorNum)
+	e.addGoalFloor(goalFloorNum, dir)
 }
 
 func (e *Elevator) NextFloor() int {
-  if e.direction < 0 {
-    return e.currentFloorNumber - 1
-  }
+	if e.direction < 0 {
+		return e.currentFloorNumber - 1
+	}
 
-  return e.currentFloorNumber + 1
+	return e.currentFloorNumber + 1
 }
 
 type pickup struct {
-  pickupFloor int
-  direction int // -1 == down, 1 == up
+	pickupFloor int
+	direction   int // -1 == down, 1 == up
 }
 
 type ElevatorControlSystem struct {
-	elevator []*Elevator
-  pickupRequests *queue.Queue
+	elevator       []*Elevator
+	pickupRequests *queue.Queue
 }
 
 func NewElevatorControlSystem(NumberOfElevators int) *ElevatorControlSystem {
 	ecs := ElevatorControlSystem{}
-	
-  for i := 0; i < NumberOfElevators; i++ {
+
+	for i := 0; i < NumberOfElevators; i++ {
 		ecs.elevator = append(ecs.elevator, NewElevator(i))
 	}
-  ecs.pickupRequests = queue.NewQueue()
+	ecs.pickupRequests = queue.NewQueue()
 
 	return &ecs
 }
 
 func (ecs *ElevatorControlSystem) status() string {
-  return ""
+	return ""
 }
 
 func (ecs *ElevatorControlSystem) pickup(pickupFloorNumber int, direction int) {
-  ecs.pickupRequests.Push(pickup{pickupFloorNumber, direction})
+	ecs.pickupRequests.Push(pickup{pickupFloorNumber, direction})
 }
 
 func (ecs *ElevatorControlSystem) update(elevatorID int, currentFloor int, goalFloor int, direction int) {
-  ecs.elevator[elevatorID].Update(currentFloor, goalFloor, direction)
+	ecs.elevator[elevatorID].Update(currentFloor, goalFloor, direction)
 }
 
 func (ecs *ElevatorControlSystem) step() {
-  for _, elev := range ecs.elevator {
-    if ecs.pickupRequests.Len() > 0 {
-      req := ecs.pickupRequests.Pop()
+	for _, elev := range ecs.elevator {
+		if ecs.pickupRequests.Len() > 0 {
+			req := ecs.pickupRequests.Pop()
 
-      if e, ok := req.(pickup); ok {
-        id := elev.GetElevatorID()
-        ecs.update(id, ecs.elevator[id].NextFloor(), e.pickupFloor, e.direction)
-      }
-    }
-  }
+			if e, ok := req.(pickup); ok {
+				id := elev.GetElevatorID()
+				ecs.update(id, ecs.elevator[id].NextFloor(), e.pickupFloor, e.direction)
+			}
+		} else {
+			continue
+		}
+	}
 }
 
 func readFromStdin() string {
-  fmt.Print("$ ")
+	fmt.Print("$ ")
 	reader := bufio.NewReader(os.Stdin)
 	line, _ := reader.ReadString('\n')
 	line = line[0 : len(line)-1]
 	return line
+}
+
+type control_state int
+
+const (
+	Status control_state = iota
+	Update
+	Pickup
+	Step
+	Exit
+	Error
+)
+
+func formatCmd(line string) (control_state, []string) {
+	if line == "status" {
+		return Status, nil
+	} else if line == "update" {
+		return Update, nil
+	} else if line == "step" {
+		return Step, nil
+	} else if line == "exit" {
+		return Exit, nil
+	} else if strings.HasPrefix(line, "pickup") {
+		line = strings.Trim(line, "pickup ")
+		args := strings.Split(line, " ")
+		if len(args) == 2 {
+			return Pickup, args
+		}
+	}
+
+	return Error, nil
 }
 
 var flagNumElev = flag.Int("n", 0, "intflag")
@@ -123,21 +156,22 @@ func main() {
 	ecs := NewElevatorControlSystem(*flagNumElev)
 
 	for {
-		cmd := readFromStdin()
+		line := readFromStdin()
+		cmd, args := formatCmd(line)
 
-    if(strings.HasPrefix(cmd, "exit")) {
-      return
-    } else if (strings.HasPrefix(cmd, "pickup")) {
-      cmd = strings.Trim(cmd, "pickup ")
-      args := strings.Split(cmd, " ")
-
-      if len(args) == 2 {
-        ecs.pickup(StringToInt(args[0]), StringToInt(args[1]))
-      }
-    } else if (strings.HasPrefix(cmd, "step")) {
-      ecs.step()
-    }
+		switch cmd {
+		case Status:
+			continue
+		case Update:
+			continue
+		case Pickup:
+			ecs.pickup(StringToInt(args[0]), StringToInt(args[1]))
+		case Step:
+			ecs.step()
+		case Exit:
+			return
+		case Error:
+			fmt.Println("invalid cmd")
+		}
 	}
-
-	fmt.Println(ecs)
 }
