@@ -13,7 +13,7 @@ import (
 type Elevator struct {
 	elevatorID        int
   currentFloorNumber int
-	direction int     // -1 == down, 0 == nowhere, 1 == up
+	direction int     // 0 == down, 1 == up
 	goalFloorNumber   map[int]bool
 }
 
@@ -23,12 +23,16 @@ func StringToInt(value string) int {
 }
 
 func NewElevator(ID int) *Elevator {
-	e := Elevator{elevatorID: ID}
+	e := Elevator{elevatorID: ID, direction: 1}
 	return &e
 }
 
+func (e *Elevator) GetElevatorID() int {
+  return e.elevatorID
+}
+
 func (e *Elevator) addGoalFloor(floorNumber int, dir int) {
-  if len(e.goalFloorNumber[floorNumber]) == 0 {
+  if n := len(e.goalFloorNumber); n == 0 {
     e.direction = dir
   }
   e.goalFloorNumber[floorNumber] = true
@@ -48,9 +52,9 @@ func (e *Elevator) Update(currentFloorNum int, goalFloorNum int, dir int) {
 func (e *Elevator) NextFloor() int {
   if e.direction < 0 {
     return e.currentFloorNumber - 1
-  } else if e.direction > 0 {
-    return e.currentFloorNumber + 1
   }
+
+  return e.currentFloorNumber + 1
 }
 
 type pickup struct {
@@ -87,10 +91,14 @@ func (ecs *ElevatorControlSystem) update(elevatorID int, currentFloor int, goalF
 }
 
 func (ecs *ElevatorControlSystem) step() {
-  for e := range ecs.elevator {
+  for _, elev := range ecs.elevator {
     if ecs.pickupRequests.Len() > 0 {
       req := ecs.pickupRequests.Pop()
-      ecs.update(i, ecs.elevator[elevatorID].NextFloor(), req.pickupFloor, req.direction)
+
+      if e, ok := req.(pickup); ok {
+        id := elev.GetElevatorID()
+        ecs.update(id, ecs.elevator[id].NextFloor(), e.pickupFloor, e.direction)
+      }
     }
   }
 }
