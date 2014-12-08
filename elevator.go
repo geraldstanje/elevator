@@ -64,7 +64,7 @@ func (e *Elevator) removeGloalFloor(floorNumber int) {
 }
 
 func (e *Elevator) canMove() bool {
-  if n := len(e.goalFloorNumber); n > 0 {
+  if e.GetNumGoalFloors() > 0 {
     return true
   }
 
@@ -73,7 +73,7 @@ func (e *Elevator) canMove() bool {
 
 func (e *Elevator) canAddGoalFloor(goalFloorNumber int, direction int) bool {
   // if there are no goalFloors
-  if n := len(e.goalFloorNumber); n == 0 {
+  if e.GetNumGoalFloors() == 0 {
     e.direction = direction
     return true
   // if the move direction of the elevator is the same was requested
