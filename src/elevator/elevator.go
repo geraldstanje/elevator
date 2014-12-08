@@ -145,20 +145,12 @@ func (ecs *ElevatorControlSystem) update(elev *Elevator, currentFloor int, goalF
 func (ecs *ElevatorControlSystem) Step() {
 	for _, elev := range ecs.elevator {
 		if ecs.pickupRequests.Len() > 0 {
-			for {
-				if ecs.pickupRequests.Len() == 0 {
-					break
-				}
+			req := ecs.pickupRequests.Peek()
 
-				req := ecs.pickupRequests.Peek()
-
-				if e, ok := req.(PickupReq); ok {
-					success := ecs.update(elev, elev.GetNextFloor(), e.pickupFloor, e.direction)
-					if success {
-						_ = ecs.pickupRequests.Pop()
-					} else {
-						break
-					}
+			if e, ok := req.(PickupReq); ok {
+				success := ecs.update(elev, elev.GetNextFloor(), e.pickupFloor, e.direction)
+				if success {
+					_ = ecs.pickupRequests.Pop()
 				}
 			}
 		} else if elev.GetNumGoalFloors() > 0 {
