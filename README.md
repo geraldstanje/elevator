@@ -41,14 +41,23 @@ different floor, so there could be a few goal floors queued up.
 
 =========================================
 
-Build the Elevator Control System:
-  - go build
+#### Set the GOPATH:
+  * run the command from install.sh
 
-Start the Elevator Control System:
-  - $ ./main (number of elevators)
-  - e.g. start with 2 elevators: $ ./main -n 2
+#### Build the Elevator Control System:
+  * go build
+
+#### Start the Elevator Control System:
+  * $ ./main -n (number of elevators)
+  * e.g. start with 2 elevators: $ ./main -n 2
+
+#### Commands:
+ * status - returns the status of all the elevators in the form of a list of triples. Each triple represents one elevator: (Elevator ID, Floor Number, Goal Floor Number).
+ * step - allows one unit of time to pass, effectively telling the elevators to go to the next goal floor.
+ * pickup floor_number direction - adds a pickup request to the pending requests queue. The arguments (floor_number, direction) are separated by spaces.
+ * exit - exits the program.
 
 Improvements to Scheduling:
-  - The elevator moves in the same direction as long as there are goalFloorNumber stored in the map of the elevator
-  - If the goalFloorNumber is empty, the elevator will go into an idle state and change the direction if
+  * The elevator moves in the same direction as long as there are goalFloorNumber stored in the map of the elevator
+  * If the goalFloorNumber is empty, the elevator will go into an idle state and change the direction if
     there are requests in the opposite direction
