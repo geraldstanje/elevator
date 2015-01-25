@@ -10,9 +10,22 @@ import (
 	"strings"
 )
 
+const maxFloorNumber = 10
+const minFloorNumber = 0
+
 func StringToInt(value string) int {
 	result, _ := strconv.ParseInt(value, 10, 64)
 	return int(result)
+}
+
+func StringToIntSlice(in []string) []int {
+  out := make([]int, len(in))
+
+  for i, val := range in {
+    out[i] = StringToInt(val)
+  }
+
+  return out
 }
 
 func readFromStdin() string {
@@ -33,7 +46,7 @@ const (
 	Error
 )
 
-func formatCmd(line string) (control_state, []string) {
+func formatCmd(line string) (control_state, []int) {
 	if line == "status" {
 		return Status, nil
 	} else if line == "step" {
@@ -43,8 +56,12 @@ func formatCmd(line string) (control_state, []string) {
 	} else if strings.HasPrefix(line, "pickup") {
 		line = strings.Trim(line, "pickup ")
 		args := strings.Split(line, " ")
-		if len(args) == 2 {
-			return Pickup, args
+    params := StringToIntSlice(args)
+
+    if len(params) == 2 && 
+      (params[0] <= maxFloorNumber && params[0] >= minFloorNumber) && 
+      (params[1] == 1 || params[1] == -1) {
+		  return Pickup, params
 		}
 	}
 
@@ -73,7 +90,7 @@ func main() {
 				fmt.Println(e)
 			}
 		case Pickup:
-			ecs.Pickup(StringToInt(args[0]), StringToInt(args[1]))
+      ecs.Pickup(args[0], args[1])
 		case Step:
 			ecs.Step()
 		case Exit:

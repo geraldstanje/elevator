@@ -47,7 +47,7 @@ different floor, so there could be a few goal floors queued up.
   * run the command from install.sh
 
 #### Build the Elevator Control System:
-  * go build
+  * go build main.go
 
 #### Start the Elevator Control System:
   * $ ./main -n (number of elevators)
