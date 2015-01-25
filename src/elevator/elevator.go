@@ -71,7 +71,7 @@ func (e *Elevator) canAddGoalFloor(goalFloorNumber int, direction int) bool {
 		// if move up
 		if direction > 0 && e.currentFloorNumber <= goalFloorNumber {
 			return true
-			// if move down
+    // if move down
 		} else if direction < 0 && e.currentFloorNumber >= goalFloorNumber {
 			return true
 		}
