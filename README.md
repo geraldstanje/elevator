@@ -46,6 +46,11 @@ different floor, so there could be a few goal floors queued up.
 #### Set the GOPATH:
   * run the command from install.sh
 
+#### Restrictions:
+  * by default the following parameters are set:
+    - minFloorNumber is set to 0
+    - maxFloorNumber is set to 10
+
 #### Build the Elevator Control System:
   * go build main.go
 
@@ -54,7 +59,7 @@ different floor, so there could be a few goal floors queued up.
   * e.g. start with 2 elevators: $ ./main -n 2
 
 #### Commands:
- * status - returns the status of all the elevators in the form of a list of triples. Each triple represents one elevator: (Elevator ID, Floor Number, Goal Floor Number).
+ * status - returns the status of all the elevators in the form of a list of triples. Each triple represents one elevator: (ElevatorID, CurrentFloorNumber, GoalFloors[]).
  * step - allows one unit of time to pass, effectively telling the elevators to go to the next goal floor.
  * pickup floor_number direction - adds a pickup request to the pending requests queue. The arguments (floor_number, direction) are separated by spaces.
  * exit - exits the program.
