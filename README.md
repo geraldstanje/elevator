@@ -74,3 +74,4 @@ different floor, so there could be a few goal floors queued up.
 
 #### Improvements to Scheduling:
   * If there are two elevator moving in the same direction and the pickup request is in the same direction, we would assign the elevator with the lower number of passengers. This would add some load ballancing to distribute the passengers accross moving elevators.
+  * Yet another improvement would be an algorithm that remembered days and patterns might be able to better predict the comings and goings and different times (the ground floor rush at 9am and the floors leaving at 5pm). So an idle elevator would move to the ground floor at 9am and to the upper floors at 5pm.
