@@ -19,13 +19,13 @@ func StringToInt(value string) int {
 }
 
 func StringToIntSlice(in []string) []int {
-  out := make([]int, len(in))
+	out := make([]int, len(in))
 
-  for i, val := range in {
-    out[i] = StringToInt(val)
-  }
+	for i, val := range in {
+		out[i] = StringToInt(val)
+	}
 
-  return out
+	return out
 }
 
 func readFromStdin() string {
@@ -56,12 +56,12 @@ func formatCmd(line string) (control_state, []int) {
 	} else if strings.HasPrefix(line, "pickup") {
 		line = strings.Trim(line, "pickup ")
 		args := strings.Split(line, " ")
-    params := StringToIntSlice(args)
+		params := StringToIntSlice(args)
 
-    if len(params) == 2 && 
-      (params[0] <= maxFloorNumber && params[0] >= minFloorNumber) && 
-      (params[1] == 1 || params[1] == -1) {
-		  return Pickup, params
+		if len(params) == 2 &&
+			(params[0] <= maxFloorNumber && params[0] >= minFloorNumber) &&
+			(params[1] == 1 || params[1] == -1) {
+			return Pickup, params
 		}
 	}
 
@@ -90,7 +90,7 @@ func main() {
 				fmt.Println(e)
 			}
 		case Pickup:
-      ecs.Pickup(args[0], args[1])
+			ecs.Pickup(args[0], args[1])
 		case Step:
 			ecs.Step()
 		case Exit:
