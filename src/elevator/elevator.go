@@ -1,160 +1,160 @@
 package elevator
 
 import (
-	"fmt"
-	"queue"
+  "fmt"
+  "queue"
 )
 
 type Elevator struct {
-	elevatorID         int
-	currentFloorNumber int // start floor is 0
-	direction          int // -1 == down, 1 == up
-	goalFloorNumber    map[int]bool
+  elevatorID         int
+  currentFloorNumber int // start floor is 0
+  direction          int // -1 == down, 1 == up
+  goalFloorNumber    map[int]bool
 }
 
 func NewElevator(ID int) *Elevator {
-	e := Elevator{elevatorID: ID, direction: 1}
-	e.goalFloorNumber = make(map[int]bool)
-	return &e
+  e := Elevator{elevatorID: ID, direction: 1}
+  e.goalFloorNumber = make(map[int]bool)
+  return &e
 }
 
 func (e *Elevator) GetElevatorID() int {
-	return e.elevatorID
+  return e.elevatorID
 }
 
 func (e *Elevator) GetCurrentFloorNumber() int {
-	return e.currentFloorNumber
+  return e.currentFloorNumber
 }
 
 func (e *Elevator) GetDirection() int {
-	return e.direction
+  return e.direction
 }
 
 func (e *Elevator) GetNumGoalFloors() int {
-	n := len(e.goalFloorNumber)
-	return n
+  n := len(e.goalFloorNumber)
+  return n
 }
 
 func (e *Elevator) GetGoalFloorNumbers() []int {
-	goalFloors := make([]int, 0)
+  goalFloors := make([]int, 0)
 
-	for k, _ := range e.goalFloorNumber {
-		goalFloors = append(goalFloors, k)
-	}
+  for k, _ := range e.goalFloorNumber {
+    goalFloors = append(goalFloors, k)
+  }
 
-	return goalFloors
+  return goalFloors
 }
 
 func (e *Elevator) addGoalFloor(floorNumber int) {
-	e.goalFloorNumber[floorNumber] = true
+  e.goalFloorNumber[floorNumber] = true
 }
 
 func (e *Elevator) removeGloalFloor(floorNumber int) {
-	delete(e.goalFloorNumber, floorNumber)
+  delete(e.goalFloorNumber, floorNumber)
 }
 
 func (e *Elevator) canMove() bool {
-	if e.GetNumGoalFloors() > 0 {
-		return true
-	}
+  if e.GetNumGoalFloors() > 0 {
+    return true
+  }
 
-	return false
+  return false
 }
 
 func (e *Elevator) canAddGoalFloor(goalFloorNumber int, direction int) bool {
-	// if there are no goalFloors
-	if e.GetNumGoalFloors() == 0 {
-		e.direction = direction
-		return true
+  // if there are no goalFloors
+  if e.GetNumGoalFloors() == 0 {
+    e.direction = direction
+    return true
   // if the move direction of the elevator is the same was requested
-	} else if e.direction == direction {
+  } else if e.direction == direction {
     // if move up
-		if direction > 0 && e.currentFloorNumber <= goalFloorNumber {
-			return true
+    if direction > 0 && e.currentFloorNumber <= goalFloorNumber {
+      return true
     // if move down
-		} else if direction < 0 && e.currentFloorNumber >= goalFloorNumber {
-			return true
-		}
-	}
+    } else if direction < 0 && e.currentFloorNumber >= goalFloorNumber {
+      return true
+    }
+  }
 
-	return false
+  return false
 }
 
 func (e *Elevator) Update(currentFloorNum int, goalFloorNum int, direction int) bool {
-	if e.canMove() {
-		e.currentFloorNumber = currentFloorNum
-		e.removeGloalFloor(e.currentFloorNumber)
-	}
+  if e.canMove() {
+    e.currentFloorNumber = currentFloorNum
+    e.removeGloalFloor(e.currentFloorNumber)
+  }
 
-	if goalFloorNum != -1 && e.canAddGoalFloor(goalFloorNum, direction) {
-		e.addGoalFloor(goalFloorNum)
-		return true
-	}
+  if goalFloorNum != -1 && e.canAddGoalFloor(goalFloorNum, direction) {
+    e.addGoalFloor(goalFloorNum)
+    return true
+  }
 
-	return false
+  return false
 }
 
 func (e *Elevator) GetNextFloor() int {
-	// move down
-	if e.direction < 0 && e.currentFloorNumber > 0 {
-		return e.currentFloorNumber - 1
-	}
-	// move up
-	return e.currentFloorNumber + 1
+  // move down
+  if e.direction < 0 && e.currentFloorNumber > 0 {
+    return e.currentFloorNumber - 1
+  }
+  // move up
+  return e.currentFloorNumber + 1
 }
 
 type PickupReq struct {
-	pickupFloor int
-	direction   int // -1 == down, 1 == up
+  pickupFloor int
+  direction   int // -1 == down, 1 == up
 }
 
 type ElevatorControlSystem struct {
-	elevator       []*Elevator
-	pickupRequests *queue.Queue
+  elevator       []*Elevator
+  pickupRequests *queue.Queue
 }
 
 func NewElevatorControlSystem(NumberOfElevators int) *ElevatorControlSystem {
-	ecs := ElevatorControlSystem{}
+  ecs := ElevatorControlSystem{}
 
-	for i := 0; i < NumberOfElevators; i++ {
-		ecs.elevator = append(ecs.elevator, NewElevator(i))
-	}
-	ecs.pickupRequests = queue.NewQueue()
+  for i := 0; i < NumberOfElevators; i++ {
+    ecs.elevator = append(ecs.elevator, NewElevator(i))
+  }
+  ecs.pickupRequests = queue.NewQueue()
 
-	return &ecs
+  return &ecs
 }
 
 func (ecs *ElevatorControlSystem) Status() []string {
-	seq := make([]string, 0)
+  seq := make([]string, 0)
 
-	for _, elev := range ecs.elevator {
-		seq = append(seq, fmt.Sprintf("elevatorID: %v, currentFloor: %v, direction: %v, goalFloors: %v", elev.GetElevatorID(), elev.GetCurrentFloorNumber(), elev.GetDirection(), elev.GetGoalFloorNumbers()))
-	}
+  for _, elev := range ecs.elevator {
+    seq = append(seq, fmt.Sprintf("elevatorID: %v, currentFloor: %v, direction: %v, goalFloors: %v", elev.GetElevatorID(), elev.GetCurrentFloorNumber(), elev.GetDirection(), elev.GetGoalFloorNumbers()))
+  }
 
-	return seq
+  return seq
 }
 
 func (ecs *ElevatorControlSystem) Pickup(pickupFloorNumber int, direction int) {
-	ecs.pickupRequests.Push(PickupReq{pickupFloorNumber, direction})
+  ecs.pickupRequests.Push(PickupReq{pickupFloorNumber, direction})
 }
 
 func (ecs *ElevatorControlSystem) update(elev *Elevator, currentFloor int, goalFloor int, direction int) bool {
-	return elev.Update(currentFloor, goalFloor, direction)
+  return elev.Update(currentFloor, goalFloor, direction)
 }
 
 func (ecs *ElevatorControlSystem) Step() {
-	for _, elev := range ecs.elevator {
-		if ecs.pickupRequests.Len() > 0 {
-			req := ecs.pickupRequests.Peek()
+  for _, elev := range ecs.elevator {
+    if ecs.pickupRequests.Len() > 0 {
+      req := ecs.pickupRequests.Peek()
 
-			if e, ok := req.(PickupReq); ok {
-				success := ecs.update(elev, elev.GetNextFloor(), e.pickupFloor, e.direction)
-				if success {
-					_ = ecs.pickupRequests.Pop()
-				}
-			}
-		} else if elev.GetNumGoalFloors() > 0 {
-			_ = ecs.update(elev, elev.GetNextFloor(), -1, elev.GetDirection())
-		}
-	}
+      if e, ok := req.(PickupReq); ok {
+        success := ecs.update(elev, elev.GetNextFloor(), e.pickupFloor, e.direction)
+        if success {
+          _ = ecs.pickupRequests.Pop()
+        }
+      }
+    } else if elev.GetNumGoalFloors() > 0 {
+      _ = ecs.update(elev, elev.GetNextFloor(), -1, elev.GetDirection())
+    }
+  }
 }
