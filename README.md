@@ -64,10 +64,13 @@ different floor, so there could be a few goal floors queued up.
  * pickup floorNumber direction - adds a pickup request to the pickupRequests queue. The arguments (floor_number, direction [1 == up, -1 == down]) are space separated.
  * exit - exits the program.
 
+#### FCFC Algorithm:
+  * FCFS-First Come First Serve is an algorithm which is the most simple and traditional way to control elevators. It doesn’t optimize the floors-searching and timing as well. Elevators work depends on the order of every request. The first one who sends the request can take the elevator first.
+
 #### Scheduling Algorithm:
-  * The elevator moves in the same direction as long as there are goalFloorNumber stored in the map called goalFloorNumber
-  * If the goalFloorNumber is empty, the elevator will go into an idle state and change the direction if
-    there are requests in the opposite direction.
+  * My scheduling algorithm is based on the elevator algorithm (also SCAN) which is described in the following article: http://en.wikipedia.org/wiki/Elevator_algorithm
+  * The elevator moves in the same direction as long as there are goalFloorNumber stored in the map called goalFloorNumber.
+  * If the goalFloorNumber is empty, the elevator will go into an idle state and change the direction if there are requests in the opposite direction.
 
 #### Improvements to Scheduling:
-  *
+  * If there are two elevator moving in the same direction and the pickup request is in the same direction, we would assign the elevator with the lower number of passengers. This would add some load ballancing to distribute the passengers accross moving elevators.
