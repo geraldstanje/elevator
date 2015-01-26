@@ -96,7 +96,7 @@ func (e *Elevator) Update(currentFloorNum int, goalFloorNum int, direction int) 
 
 func (e *Elevator) GetNextFloor() int {
 	// move down
-	if e.direction < 0 && e.currentFloorNumber > 0 {
+	if e.direction == -1 && e.currentFloorNumber > 0 {
 		return e.currentFloorNumber - 1
 	}
 	// move up
