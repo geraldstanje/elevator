@@ -66,9 +66,9 @@ func (e *Elevator) canAddGoalFloor(goalFloorNumber int, direction int) bool {
 	if e.GetNumGoalFloors() == 0 {
 		e.direction = direction
 		return true
-		// if the move direction of the elevator is the same was requested
+  // if the move direction of the elevator is the same was requested
 	} else if e.direction == direction {
-		// if move up
+    // if move up
 		if direction > 0 && e.currentFloorNumber <= goalFloorNumber {
 			return true
     // if move down
