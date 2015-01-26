@@ -68,7 +68,7 @@ different floor, so there could be a few goal floors queued up.
   * FCFS-First Come First Serve is an algorithm which is the most simple and traditional way to control elevators. It doesn’t optimize the floors-searching and timing as well. Elevators work depends on the order of every request. The first one who sends the request can take the elevator first.
 
 #### Scheduling Algorithm:
-  * My scheduling algorithm is based on the elevator algorithm (also SCAN) which is described in the following article: http://en.wikipedia.org/wiki/Elevator_algorithm
+  * My scheduling algorithm is based on the elevator algorithm (also SCAN). The elevator algorithm has found an application in computer operating systems as an algorithm for scheduling hard disk requests.
   * The elevator moves in the same direction as long as there are goalFloorNumber stored in the map called goalFloorNumber.
   * If the goalFloorNumber is empty, the elevator will go into an idle state and change the direction if there are requests in the opposite direction.
 
