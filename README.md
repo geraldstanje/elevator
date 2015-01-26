@@ -61,7 +61,7 @@ different floor, so there could be a few goal floors queued up.
 #### Commands:
  * status - returns the status of all the elevators in the form of a list of triples. Each triple represents one elevator in the following format: (ElevatorID, CurrentFloorNumber, GoalFloors[]).
  * step - allows one unit of time to pass, effectively telling the elevators to go to the next goal floor.
- * pickup floorNumber direction - adds a pickup request to the pickupRequests queue. The arguments (floor_number, direction) are space separated.
+ * pickup floorNumber direction - adds a pickup request to the pickupRequests queue. The arguments (floor_number, direction [1 == up, -1 == down]) are space separated.
  * exit - exits the program.
 
 #### Scheduling Algorithm:
