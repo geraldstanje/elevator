@@ -69,7 +69,7 @@ different floor, so there could be a few goal floors queued up.
 
 #### Scheduling Algorithm:
   * My scheduling algorithm is based on the elevator algorithm (also SCAN). The elevator algorithm has found an application in computer operating systems as an algorithm for scheduling hard disk requests.
-  * The elevator moves in the same direction as long as there are goalFloorNumber stored in the map called goalFloorNumber.
+  * The elevator moves in the same direction as long as there are remaining requests stored in the map called goalFloorNumber.
   * If the goalFloorNumber is empty, the elevator will go into an idle state and change the direction if there are requests in the opposite direction.
 
 #### Improvements to Scheduling:
