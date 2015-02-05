@@ -86,7 +86,7 @@ func (e *Elevator) Update(currentFloorNum int, goalFloorNum int, direction int) 
 		e.removeGloalFloor(e.currentFloorNumber)
 	}
 
-	if goalFloorNum != -1 && e.canAddGoalFloor(goalFloorNum, direction) {
+	if e.canAddGoalFloor(goalFloorNum, direction) {
 		e.addGoalFloor(goalFloorNum)
 		return true
 	}
