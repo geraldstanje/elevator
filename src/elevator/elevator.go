@@ -81,7 +81,7 @@ func (e *Elevator) canAddGoalFloor(goalFloorNumber int, direction int) bool {
 }
 
 func (e *Elevator) Update(currentFloorNum int, goalFloorNum int, direction int) bool {
-	// update the goalfloor map
+	// update the goalFloorNumber map
 	if e.canMove() {
 		e.currentFloorNumber = currentFloorNum
 		e.removeGloalFloor(e.currentFloorNumber)
