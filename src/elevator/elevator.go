@@ -7,9 +7,9 @@ import (
 
 type Elevator struct {
 	elevatorID         int
-	currentFloorNumber int // start floor is 0
-	direction          int // -1 == down, 1 == up
-	goalFloorNumber    map[int]bool
+	currentFloorNumber int          // start floor is 0
+	direction          int          // -1 == down, 1 == up
+	goalFloorNumber    map[int]bool // stores the floors where the elevetor needs to stop
 }
 
 func NewElevator(ID int) *Elevator {
