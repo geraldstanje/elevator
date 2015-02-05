@@ -148,7 +148,7 @@ func (ecs *ElevatorControlSystem) Step() {
 			req := ecs.pickupRequests.Peek()
 
 			if e, ok := req.(PickupReq); ok {
-        // if the elevator moves in the same direction as the new pickup request
+				// if the elevator moves in the same direction as the new pickup request
 				success := ecs.update(elev, elev.GetNextFloor(), e.pickupFloor, e.direction)
 				if success {
 					_ = ecs.pickupRequests.Pop()
