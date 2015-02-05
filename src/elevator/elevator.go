@@ -86,6 +86,7 @@ func (e *Elevator) Update(currentFloorNum int, goalFloorNum int, direction int) 
 		e.removeGloalFloor(e.currentFloorNumber)
 	}
 
+	// if elevator moves in the same direction or the elevator is empty
 	if e.canAddGoalFloor(goalFloorNum, direction) {
 		e.addGoalFloor(goalFloorNum)
 		return true
