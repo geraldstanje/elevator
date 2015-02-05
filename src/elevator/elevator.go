@@ -146,6 +146,7 @@ func (ecs *ElevatorControlSystem) update(elev *Elevator, currentFloor int, goalF
 
 func (ecs *ElevatorControlSystem) Step() {
 	for _, elev := range ecs.elevator {
+		// check if there is a pickup request
 		if ecs.pickupRequests.Len() > 0 {
 			req := ecs.pickupRequests.Peek()
 
@@ -156,6 +157,8 @@ func (ecs *ElevatorControlSystem) Step() {
 					_ = ecs.pickupRequests.Pop()
 				}
 			}
+			// check if the goalFloorNumber map is not empty
+			// if the goalFloorNumber map is not empty, the elevator needs to move to the next goal floor
 		} else if elev.GetNumGoalFloors() > 0 {
 			_ = ecs.update(elev, elev.GetNextFloor(), -1, elev.GetDirection())
 		}
